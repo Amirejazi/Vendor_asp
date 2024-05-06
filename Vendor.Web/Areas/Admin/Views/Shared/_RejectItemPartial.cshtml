@@ -1,0 +1,8 @@
+﻿@model Vendor.DataLayer.DTOs.Common.RejectItemDTO
+
+<input type="hidden" asp-for="Id" />
+<div class="form-group">
+    <label>متن مورد نظر</label>
+    <textarea class="form-control" asp-for="RejectMessage" rows="9"></textarea>
+    <span class="text-danger" asp-validation-for="RejectMessage"></span>
+</div>

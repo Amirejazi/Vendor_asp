@@ -1,0 +1,71 @@
+﻿@model Vendor.DataLayer.DTOs.Account.RegisterUserDTO
+@{
+    ViewData["Title"] = "ثبت نام";
+}
+
+@section Scripts
+{
+    <partial name="_JqueryValidators"/>
+    <partial name="_CaptchaScripts"/>
+}
+
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="/">خانه</a></li>
+                        <li>ثبت نام</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="customer_login mt-60">
+    <div class="container">
+        <div class="row">
+            <!--register area start-->
+            <div class="col-lg-6 col-md-6 offset-lg-3 offset-md-3">
+                <div class="account_form register">
+                    <h2>ثبت نام</h2>
+                    <form asp-controller="Acount" asp-action="Register">
+                        <partial name="_CaptchaInput" />
+                        <p>
+                            <label>نام <span>*</span></label>
+                            <input asp-for="FisrtName" type="text">
+                            <span asp-validation-for="FisrtName" class="text-danger"></span>
+                        </p>
+                        <p>
+                            <label>نام خانوادگی <span>*</span></label>
+                            <input asp-for="LastName" type="text">
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </p>
+                        <p>
+                            <label>تلفن همراه <span>*</span></label>
+                            <input asp-for="Mobile" type="text">
+                            <span asp-validation-for="Mobile" class="text-danger"></span>
+                        </p>
+                        <p>
+                            <label>رمز عبور <span>*</span></label>
+                            <input asp-for="Password" type="password">
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </p>
+                        <p>
+                            <label>تکراررمز عبور<span>*</span></label>
+                            <input asp-for="ConfirmPassword" type="password">
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </p>
+                        <div class="login_submit">
+                            <button type="submit">ثبت نام</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!--register area end-->
+        </div>
+    </div>
+</div>
+

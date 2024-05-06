@@ -1,0 +1,34 @@
+﻿
+<!DOCTYPE html>
+<html class="no-js" lang="fa" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>وندور | @ViewData["Title"]</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <partial name="_HeaderRefrences" />
+    @await RenderSectionAsync("Styles", false)
+
+</head>
+
+<body>
+
+    @await Component.InvokeAsync("SiteHeader")
+
+    @RenderBody()
+
+    @await Component.InvokeAsync("SiteFooter")
+
+    <partial name="_FooterRefrences" />
+
+    @await RenderSectionAsync("Scripts", false)
+
+    <partial name="_SiteMessages" />
+
+
+
+</body>
+
+</html>

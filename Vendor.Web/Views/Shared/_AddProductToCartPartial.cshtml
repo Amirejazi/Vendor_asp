@@ -1,0 +1,15 @@
+﻿@model Vendor.DataLayer.DTOs.Order.AddProductToOrderDTO
+
+<form method="post"
+      asp-area="User"
+      asp-controller="Order"
+      asp-action="AddProductToOrder"
+      data-ajax="true"
+      data-ajax-success="OnSuccessAddProductToOrder"
+      data-ajax-method="post"
+      id="AddProductToOrder">
+
+    <input type="hidden" asp-for="ProductId" id="add_product_to_order_ProductId"/>
+    <input type="hidden" asp-for="ProductColorId" id="add_product_to_order_ProductColorId"/>
+    <input type="hidden" asp-for="Count" id="add_product_to_order_Count"/>
+</form>

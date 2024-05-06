@@ -1,0 +1,350 @@
+﻿@using Vendor.DataLayer.Entities.Product
+@using Vendor.Application.Utils
+@model Vendor.DataLayer.DTOs.Product.EditProductDTO
+@{
+    ViewData["Title"] = "ویرایش" + Model.Title;
+    var categories = ViewBag.Categories as List<ProductCategory>;
+}
+
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="/">خانه</a></li>
+                        <li>@ViewData["Title"]</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="main_content_area">
+    <div class="container">
+        <div class="account_dashboard">
+            <div class="row">
+                <div class="col-sm-12 col-md-3 col-lg-3">
+                    <!-- Nav tabs -->
+                    @await Component.InvokeAsync("SellerSidebar")
+                </div>
+                <div class="col-sm-12 col-md-9 col-lg-9">
+                    <!-- Tab panes -->
+                    <div class="tab-content dashboard_content">
+                        <div class="tab-pane fade active show" id="account-details">
+                            <h3>جزئیات حساب </h3>
+                            <div class="login">
+                                <div class="login_form_container">
+                                    <div class="account_login_form">
+                                        <form id="create_product_form" asp-action="EditProduct" asp-area="Seller" asp-controller="Product" enctype="multipart/form-data">
+                                            <input type="hidden" asp-for="Id" />
+                                            <input type="hidden" asp-for="ImageName" />
+                                            @if (Model.ProductColors != null && Model.ProductColors.Any())
+                                            {
+                                                @for (int i = 0; i < Model.ProductColors.Count; i++)
+                                                {
+                                                    <input type="hidden" value="@Model.ProductColors[i].ColorName" name="ProductColors[@i].ColorName" color-name-hidden-index="@i">
+                                                    <input type="hidden" value="@Model.ProductColors[i].Price" name="ProductColors[@i].Price" color-price-hidden-index="@i">
+                                                    <input type="hidden" value="@Model.ProductColors[i].ColorCode" name="ProductColors[@i].ColorCode" color-code-hidden-index="@i">
+                                                }
+                                            }
+                                            
+                                            @if (Model.ProductFeatures != null && Model.ProductFeatures.Any())
+                                            {
+                                                @for (int i = 0; i < Model.ProductFeatures.Count; i++)
+                                                {
+                                                    <input type="hidden" value="@Model.ProductFeatures[i].FeatureTitle" name="ProductFeatures[@i].FeatureTitle" feature-hidden-index="@i">
+                                                    <input type="hidden" value="@Model.ProductFeatures[i].FeatureValue" name="ProductFeatures[@i].FeatureValue" feature-value-hidden-index="@i">
+                                                }
+                                            }
+                                            <label>نام محصول</label>
+                                            <input type="text" asp-for="Title">
+                                            <span class="text-danger" asp-validation-for="Title"></span>
+                                            <br />
+                                            <label>قیمت محصول</label>
+                                            <input asp-for="Price">
+                                            <span class="text-danger" asp-validation-for="Price"></span>
+                                            <br />
+                                            <label>توضیحات کوتاه</label>
+                                            <textarea asp-for="ShortDescription" class="form-control" rows="7"></textarea>
+                                            <span class="text-danger" asp-validation-for="ShortDescription"></span>
+                                            <br />
+                                            <label>توضیحات اصلی</label>
+                                            <textarea asp-for="Description" ckeditor="1" class="form-control" rows="7"></textarea>
+                                            <span class="text-danger" asp-validation-for="Description"></span>
+                                            <br />
+                                            <label>
+                                                <input type="checkbox" name="@nameof(Model.IsActive)" value="true" @(Model.IsActive ? "checked" : "") /> فعال/غیرفعال
+                                            </label>
+                                            <br />
+                                            <div>
+                                                <img src="@(PathExtentions.ProductThumbnailImage + Model.ImageName)" />
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <input type="file" name="productImage" accept=".png,.jpeg,.jpg" />
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            @if (categories != null && categories.Any(s => s.ParentId == null))
+                                            {
+                                                <ul>
+                                                    @foreach (var category in categories.Where(s => s.ParentId == null))
+                                                    {
+                                                        var isParentCategorySelected = Model.SelectedCategories.Any(s => s == category.Id);
+                                                        <li>
+                                                            <label>
+                                                                <input type="checkbox" name="@nameof(Model.SelectedCategories)" main-category-checkbox="@category.Id" value="@category.Id" @(isParentCategorySelected ? "checked" : "") /> @category.Title
+                                                            </label>
+                                                        </li>
+                                                        @if (categories.Any(s => s.ParentId == category.Id))
+                                                        {
+                                                            <ul id="sub_categories_@category.Id" style="display: @(isParentCategorySelected ? "block" : "none")">
+                                                                @foreach (var subCategory in categories.Where(s => s.ParentId == category.Id))
+                                                                {
+                                                                    var isSubCategorySelected = Model.SelectedCategories.Any(s => s == subCategory.Id);
+                                                                    <li>
+                                                                        <label>
+                                                                            <span>   </span><input type="checkbox" name="@nameof(Model.SelectedCategories)" main-category-checkbox="@subCategory.Id" value="@subCategory.Id" parent-category-id="@category.Id" @(isSubCategorySelected ? "checked" : "") /> @subCategory.Title
+                                                                        </label>
+                                                                    </li>
+                                                                    @if (categories.Any(s => s.ParentId == subCategory.Id))
+                                                                    {
+                                                                        <ul id="sub_categories_@subCategory.Id" style="display:@(isSubCategorySelected ? "block" : "none")">
+                                                                            @foreach (var secondSubCategory in categories.Where(s => s.ParentId == subCategory.Id))
+                                                                            {
+                                                                                var isSecondSubCategorySelected = Model.SelectedCategories.Any(s => s == secondSubCategory.Id);
+                                                                                <li>
+                                                                                    <label>
+                                                                                        <span>   </span><input type="checkbox" name="@nameof(Model.SelectedCategories)" value="@secondSubCategory.Id" parent-category-id="@subCategory.Id" @(isSecondSubCategorySelected ? "checked" : "") /> @secondSubCategory.Title
+                                                                                    </label>
+                                                                                </li>
+                                                                            }
+                                                                        </ul>
+                                                                    }
+                                                                }
+                                                            </ul>
+                                                        }
+                                                    }
+                                                </ul>
+                                            }
+                                            <hr />
+
+                                            <label>رنگ محصول</label>
+                                            <input type="text" placeholder="رنگ محصول" id="product_color_name_input" />
+
+                                            <label>کد رنگ محصول</label>
+                                            <input type="color" id="product_color_code_input" />
+
+                                            <label>قیمت مضاف بر محصول</label>
+                                            <input type="number" placeholder="قیمت مضاف بر محصول" id="product_color_price_input" />
+
+                                            <button class="btn btn-success" id="add_color_btn">افزودن رنگ</button>
+                                            <hr />
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th> نام رنگ</th>
+                                                    <th>قیمت</th>
+                                                    <th> کد رنگ</th>
+                                                    <th>دستورات</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="list_of_product_color">
+                                                @if (Model.ProductColors != null && Model.ProductColors.Any())
+                                                {
+                                                    @for (int i = 0; i < Model.ProductColors.Count; i++)
+                                                    {
+                                                        <tr color-table-item="@i">
+                                                            <td>@Model.ProductColors[i].ColorName</td>
+                                                            <td>@Model.ProductColors[i].Price</td>
+                                                            <td><div style="border-radius: 50%;width: 40px; height:40px; background-color:@Model.ProductColors[i].ColorCode"></div></td>
+                                                            <td>
+                                                                <a class="btn-sm btn-danger text-white" onclick="removeProductColor(@i)">حذف</a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                </tbody>
+                                            </table>
+                                            
+                                            <label>ویژگی محصول</label>
+                                            <input type="text" placeholder="ویژگی محصول" id="product_feature_input" />
+
+                                            <label>مقدار ویژگی محصول</label>
+                                            <input type="text" placeholder="مقدار ویژگی محصول " id="product_feature_value_input" />
+                                            <br />
+                                            
+                                            <button class="btn btn-success" id="add_feature_btn">افزودن ویژگی</button>
+                                            <br />
+
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th> ویژگی محصول</th>
+                                                        <th>مقدار ویژگی محصول</th>
+                                                        <th>دستورات</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="list_of_product_feature">
+                                                    @if (Model.ProductFeatures != null && Model.ProductFeatures.Any())
+                                                    {
+                                                        @for (int i = 0; i < Model.ProductFeatures.Count; i++)
+                                                        {
+                                                            <tr feature-table-item="@i">
+                                                                <td>@Model.ProductFeatures[i].FeatureTitle</td>
+                                                                <td>@Model.ProductFeatures[i].FeatureValue</td>
+                                                                <td>
+                                                                    <a class="btn-sm btn-danger text-white" onclick="removeProductFeature(@i)">حذف</a>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+
+                                            <div class="save_button primary_btn default_button">
+                                                <button type="submit">ویرایش محصول</button>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts
+    {
+    <partial name="_JqueryValidators" />
+
+    <script>
+        $("[main-category-checkbox]").on('change', function (e) {
+            var isChecked = $(this).is(":checked");
+            var selecedCategoryId = $(this).attr('main-category-checkbox');
+            if (isChecked) {
+                $('#sub_categories_' + selecedCategoryId).slideDown(300);
+            }
+            else {
+                $('#sub_categories_' + selecedCategoryId).slideUp(300);
+                $('[parent-category-id="' + selecedCategoryId + '"]').prop("checked", false);
+
+            }
+
+        });
+
+        $("#add_color_btn").on('click', function (e) {
+            e.preventDefault();
+            var colorName = $("#product_color_name_input").val();
+            var colorPrice = $("#product_color_price_input").val();
+            var colorCode = $("#product_color_code_input").val();
+            if (colorName !== '' && colorPrice !== '' && colorCode !== '') {
+                var currentColorCount = $('#list_of_product_color tr');
+                var index = currentColorCount.length;
+
+                var numberOfSelectedColor = $('[color-name-hidden-index][value="' + colorName + '"]');
+                if (numberOfSelectedColor.length === 0) {
+                    var colorNameNode = `<input type="hidden" value="${colorName}" name="ProductColors[${index}].ColorName" color-name-hidden-index="${index}" >`;
+                    var colorPriceNode = `<input type="hidden" value="${colorPrice}" name="ProductColors[${index}].Price" color-price-hidden-index="${index}" >`;
+                    var colorCodeNode = `<input type="hidden" value="${colorCode}" name="ProductColors[${index}].ColorCode" color-code-hidden-index="${index}" >`;
+                    $("#create_product_form").append(colorNameNode);
+                    $("#create_product_form").append(colorPriceNode);
+                    $("#create_product_form").append(colorCodeNode);
+
+                    var colorTableNode = `<tr color-table-item="${index}"> <td>${colorName}</td> <td>${colorPrice}</td> <td><div style="border-radius: 50%;width: 40px; height:40px; background-color:${colorCode}"></div></td> <td> <a class="btn-sm btn-danger text-white" onclick="removeProductColor(${index})">حذف</a> </td> </tr>`;
+                    $("#list_of_product_color").append(colorTableNode);
+
+                    $("#product_color_name_input").val('');
+                    $("#product_color_price_input").val('');
+                    $("#product_color_code_input").val('');
+                }
+                else {
+                    ShowMessage('اخطار', 'رنگ وارد شده تکراری میباشد!', 'warning');
+                    $("#product_color_name_input").val('').focus();
+                }
+            }
+            else {
+                ShowMessage('اخطار', 'لطفا نام رنگ و قیمت را بدرستی وارد کنید!', 'warning');
+            }
+        });
+
+        function removeProductColor(index) {
+            $('[color-name-hidden-index="' + index + '"]').remove();
+            $('[color-price-hidden-index="' + index + '"]').remove();
+            $('[color-code-hidden-index="' + index + '"]').remove();
+            $('[color-table-item="' + index + '"]').remove();
+            reOrderProductColorHiddenInput();
+        }
+
+        function reOrderProductColorHiddenInput() {
+            var hiddenColors = $('[color-name-hidden-index]');
+            $.each(hiddenColors, function (index, value) {
+                var hiddenColor = $(value);
+                var colorId = $(value).attr('color-name-hidden-index');
+                var hiddenPrice = $('[color-price-hidden-index="' + colorId + '"]');
+                var hiddenCode = $('[color-code-hidden-index="' + colorId + '"]');
+                $(hiddenColor).attr('name', 'ProductColors[' + index + '].ColorName');
+                $(hiddenPrice).attr('name', 'ProductColors[' + index + '].Price');
+                $(hiddenCode).attr('name', 'ProductColors[' + index + '].ColorCode');
+
+            });
+        }
+
+        $("#add_feature_btn").on('click', function (e) {
+            e.preventDefault();
+            var feature = $("#product_feature_input").val();
+            var featureValue = $("#product_feature_value_input").val();
+            if (feature !== '' && featureValue !== '') {
+                var currentFeatureCount = $('#list_of_product_feature tr');
+                var index = currentFeatureCount.length;
+
+                var numberOfSelectedFeature = $('[feature-hidden-index][value="' + feature + '"]');
+                if (numberOfSelectedFeature.length === 0) {
+                    var featureNode = `<input type="hidden" value="${feature}" name="ProductFeatures[${index}].FeatureTitle" feature-hidden-index="${index}" >`;
+                    var featureValueNode = `<input type="hidden" value="${featureValue}" name="ProductFeatures[${index}].FeatureValue" feature-value-hidden-index="${index}" >`;
+                    $("#create_product_form").append(featureNode);
+                    $("#create_product_form").append(featureValueNode);
+
+                    var featureTableNode = `<tr feature-table-item="${index}"> <td>${feature}</td> <td>${featureValue}</td> <td> <a class="btn-sm btn-danger text-white" onclick="removeProductFeature(${index})">حذف</a> </td> </tr>`;
+                    $("#list_of_product_feature").append(featureTableNode);
+
+                    $("#product_feature_input").val('');
+                    $("#product_feature_value_input").val('');
+                }
+                else {
+                    ShowMessage('اخطار', 'ویژگی وارد شده تکراری میباشد!', 'warning');
+                    $("#product_feature_input").val('').focus();
+                }
+            }
+            else {
+                ShowMessage('اخطار', 'لطفا ویژگی ومقدار آنرا را بدرستی وارد کنید!', 'warning');
+            }
+        });
+
+        function removeProductFeature(index) {
+            $('[feature-hidden-index="' + index + '"]').remove();
+            $('[feature-value-hidden-index="' + index + '"]').remove();
+            $('[feature-table-item="' + index + '"]').remove();
+            reOrderProductFeatureHiddenInput();
+        }
+
+        function reOrderProductFeatureHiddenInput() {
+            var hiddenFeatures = $('[feature-hidden-index]');
+            $.each(hiddenFeatures, function (index, value) {
+                var hiddenFeature = $(value);
+                var featureId = $(value).attr('feature-hidden-index');
+                var hiddenFeatureValue = $('[feature-value-hidden-index="' + featureId + '"]');
+                $(hiddenFeature).attr('name', 'ProductFeatures[' + index + '].FeatureTitle');
+                $(hiddenFeatureValue).attr('name', 'ProductFeatures[' + index + '].FeatureValue');
+
+            });
+        }
+    </script>
+}

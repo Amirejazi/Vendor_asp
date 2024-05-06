@@ -1,0 +1,28 @@
+﻿.file_input_edit {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.circular--landscape {
+    display: inline-block;
+    position: relative;
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.circular--landscape img {
+    width: auto;
+    height: 100%;
+    margin-left: -50px;
+}
+
+.ck-content{
+    height:300px;
+}
+
+.cursor-point {
+    cursor: pointer;
+}
